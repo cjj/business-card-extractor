@@ -21,7 +21,7 @@ A **Node.js / Next.js** web application that lets you upload photos of business 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/cjj/business-card-extractor
    cd business-card-extractor
    ```
 2. **Install dependencies**
