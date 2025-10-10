@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Business Card Contact Extractor
 
-## Getting Started
+A **Node.js / Next.js** web application that lets you upload photos of business cards, automatically extracts contact information, searches for a LinkedIn profile, and exports the results to a CSV file ready for import into Google Docs/Sheets.
 
-First, run the development server:
+## Features
+
+- **Image upload** (multiple JPG/PNG files at once)
+- **Data extraction** using either:
+  - **AI Vision** (OpenAI GPT‑4o) for high‑accuracy extraction, **or**
+  - **OCR** (Tesseract.js) with advanced regex parsing
+- **LinkedIn profile search** – generates a LinkedIn search URL for each contact
+- **CSV export** compatible with Google Docs/Sheets templates
+- Fully responsive UI built with Tailwind CSS and Radix UI components
+
+## Prerequisites
+
+- Node.js (v18 or later) and npm (or yarn/pnpm) installed
+- An OpenAI API key (required for AI Vision mode). You can obtain one at https://platform.openai.com/api-keys.
+
+## Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd business-card-extractor
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install   # or `yarn` / `pnpm install`
+   ```
+3. **Configure environment variables**
+   Create a `.env.local` file in the project root and add:
+   ```env
+   OPENAI_API_KEY=your-openai-api-key   # required for AI Vision mode
+   ```
+   The variable is optional if you plan to use the OCR‑only mode.
+
+## Running the Application Locally
+
+Start the development server:
+```bash
+npm run dev   # or `yarn dev` / `pnpm dev`
+```
+The app will be available at **http://localhost:3000**.
+
+### Using the UI
+1. Click **Select Images** to choose one or more business‑card photos.
+2. Toggle the **AI Vision** switch to choose between AI (recommended) or OCR extraction.
+3. Press **Extract** – the app will process each image, fetch a LinkedIn search link, and display the results in a table.
+4. Click **Download CSV** to export all contacts.
+
+## API Endpoints
+
+- `POST /api/extract` – extracts contact data using OpenAI GPT‑4o (requires `OPENAI_API_KEY`).
+- `POST /api/extract-ocr` – extracts contact data using Tesseract OCR with custom parsing.
+- `POST /api/linkedin-search` – returns a LinkedIn search URL for a given name and company.
+
+## Building for Production
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build   # creates an optimized production build
+npm start       # runs the production server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project is open‑source and available under the MIT License.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Built with Next.js 15, Tailwind CSS, Radix UI, OpenAI, and Tesseract.js.*
