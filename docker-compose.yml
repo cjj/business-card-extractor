@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local   # copy from .env.example and edit as needed
+    restart: unless-stopped
