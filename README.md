@@ -55,6 +55,21 @@ The app will be available at **http://localhost:3000**.
 - `POST /api/extract-ocr` – extracts contact data using Tesseract OCR with custom parsing.
 - `POST /api/linkedin-search` – returns a LinkedIn search URL for a given name and company.
 
+## Running with Docker
+
+Alternatively, you can run the application using Docker and Docker Compose.
+
+1.  **Build and run the container:**
+    ```bash
+    docker-compose up -d --build
+    ```
+2.  The application will be available at **http://localhost:3000**.
+
+To stop the application, run:
+```bash
+docker-compose down
+```
+
 ## Building for Production
 
 ```bash
