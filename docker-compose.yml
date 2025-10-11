@@ -5,5 +5,5 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env.local   # copy from .env.example and edit as needed
+      - .env.local   # create from .env.example and fill in your details
     restart: unless-stopped
