@@ -1,6 +1,6 @@
 # Business Card Contact Extractor
 
-A **Node.js / Next.js** web application that lets you upload photos of business cards, automatically extracts contact information, searches for a LinkedIn profile, and exports the results to a CSV file ready for import into Google Docs/Sheets.
+A **Node.js / Next.js** web application that lets you upload photos of business cards, automatically extracts contact information, searches for a LinkedIn profile, and exports the results to a CSV file ready for import into Google Contacts.
 
 ## Features
 
@@ -9,7 +9,7 @@ A **Node.js / Next.js** web application that lets you upload photos of business 
   - **AI Vision** (OpenAI GPT‑4o) for high‑accuracy extraction, **or**
   - **OCR** (Tesseract.js) with advanced regex parsing
 - **LinkedIn profile search** – generates a LinkedIn search URL for each contact
-- **CSV export** compatible with Google Docs/Sheets templates
+- **CSV export** compatible with Google Contacts import template
 - Fully responsive UI built with Tailwind CSS and Radix UI components
 
 ## Prerequisites
@@ -57,7 +57,7 @@ The app will be available at **http://localhost:3000**.
 1. Click **Select Images** to choose one or more business‑card photos.
 2. Toggle the **AI Vision** switch to choose between AI (recommended) or OCR extraction.
 3. Press **Extract** – the app will process each image, fetch a LinkedIn search link, and display the results in a table.
-4. Click **Download CSV** to export all contacts.
+4. Click **Download CSV** to export all contacts. You should be able to use this file directly to import into Google Contacts. 
 
 ## API Endpoints
 
