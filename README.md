@@ -14,7 +14,13 @@ A **Node.js / Next.js** web application that lets you upload photos of business 
 
 ## Prerequisites
 
+**For Local Development:**
 - Node.js (v18 or later) and npm (or yarn/pnpm) installed
+
+**For Docker:**
+- Docker and Docker Compose installed
+
+**For AI Vision Mode:**
 - An OpenAI API key (required for AI Vision mode). You can obtain one at https://platform.openai.com/api-keys.
 
 ## Setup
@@ -29,11 +35,15 @@ A **Node.js / Next.js** web application that lets you upload photos of business 
    npm install   # or `yarn` / `pnpm install`
    ```
 3. **Configure environment variables**
-   Create a `.env.local` file in the project root and add:
+   Copy the example file and configure your API key:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then edit `.env.local` and add your OpenAI API key:
    ```env
    OPENAI_API_KEY=your-openai-api-key   # required for AI Vision mode
    ```
-   The variable is optional if you plan to use the OCR‑only mode.
+   The API key is optional if you plan to use OCR-only mode.
 
 ## Running the Application Locally
 
@@ -57,18 +67,44 @@ The app will be available at **http://localhost:3000**.
 
 ## Running with Docker
 
-Alternatively, you can run the application using Docker and Docker Compose.
+Alternatively, you can run the application using Docker and Docker Compose. The Docker setup uses an optimized production build with Next.js standalone mode for minimal image size (~300MB) and fast startup.
+
+### Prerequisites
+- Docker and Docker Compose installed
+- `.env.local` file configured (see Setup section above)
+
+### Quick Start
 
 1.  **Build and run the container:**
     ```bash
     docker-compose up -d --build
     ```
-2.  The application will be available at **http://localhost:3000**.
 
-To stop the application, run:
+2.  **Access the application:**
+    - Open your browser to **http://localhost:3000**
+
+### Managing the Container
+
+**View logs:**
+```bash
+docker logs business-card-extractor-app-1
+```
+
+**Stop the application:**
 ```bash
 docker-compose down
 ```
+
+**Rebuild after code changes:**
+```bash
+docker-compose up -d --build
+```
+
+### Notes
+- The container uses a non-root user for enhanced security
+- Environment variables are loaded from `.env.local` at runtime
+- OCR mode works without an API key; AI Vision mode requires `OPENAI_API_KEY`
+- The production build uses multi-stage Docker builds for optimization
 
 ## Building for Production
 
