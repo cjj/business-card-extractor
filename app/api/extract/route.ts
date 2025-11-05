@@ -91,7 +91,7 @@ Instructions:
       const jsonString = jsonMatch ? jsonMatch[0] : content;
       extractedData = JSON.parse(jsonString);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', content);
+      console.error('Failed to parse OpenAI response:', content, parseError);
       throw new Error('Failed to parse extracted data');
     }
 

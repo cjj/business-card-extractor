@@ -228,7 +228,7 @@ export default function BusinessCardExtractor() {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               AI extraction requires an OpenAI API key. Please set the OPENAI_API_KEY environment variable or switch to OCR mode.
-              You can get an API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">OpenAI's platform</a>.
+              You can get an API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">OpenAI&apos;s platform</a>.
             </AlertDescription>
           </Alert>
         )}
