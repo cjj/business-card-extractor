@@ -210,6 +210,7 @@ export default function BusinessCardExtractor() {
 
     // Remove LinkedIn Profile field from export (it's only for display)
     const exportData = extractedData.map(contact => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { 'LinkedIn Profile': _, ...rest } = contact;
       return rest;
     });
