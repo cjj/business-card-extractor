@@ -113,6 +113,32 @@ npm run build   # creates an optimized production build
 npm start       # runs the production server
 ```
 
+## Development & CI Notes
+
+### CI/Build Pipeline
+The GitHub Actions CI workflow runs the following checks in order:
+1. **Lint** - `npm run lint`
+2. **TypeScript check** - `npx tsc --noEmit`
+3. **Tests** - `npm test`
+4. **Build** - `npm run build`
+
+**Important:** All commands must pass for CI to succeed. If you add new scripts or modify the build process, ensure they're compatible with the CI workflow in `.github/workflows/ci.yml`.
+
+### Google Contacts CSV Format
+The application exports contact data in Google Contacts CSV import format with these fields:
+- **Name fields:** `Name`, `Given Name`, `Family Name`
+- **Contact fields:** `E-mail 1 - Type/Value`, `Phone 1 - Type/Value`
+- **Address fields:** `Address 1 - Type/Formatted/Street/City/Region/Postal Code/Country`
+- **Organization fields:** `Organization 1 - Name/Title`
+- **Website fields:** `Website 1 - Type/Value`
+
+**Note:** LinkedIn Profile is displayed in the UI but intentionally excluded from CSV export.
+
+### Recent Changes
+- **2025-12-13:** Updated to Google Contacts official CSV format (changed from `First Name`/`Last Name` to `Given Name`/`Family Name`)
+- **2025-12-13:** Security patches: Next.js 15.5.3 → 15.5.9, Node.js 20 → 22 (Dockerfile)
+- **2025-12-13:** Added placeholder test script to satisfy CI requirements
+
 ## License
 
 This project is open‑source and available under the MIT License.
