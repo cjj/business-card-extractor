@@ -13,21 +13,25 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import Papa from 'papaparse';
 
 interface ContactData {
-  'First Name': string;
-  'Last Name': string;
-  'E-mail 1': string;
-  'Phone 1': string;
-  'Address 1': string;
-  'Country': string;
+  'Name': string;
+  'Given Name': string;
+  'Family Name': string;
+  'E-mail 1 - Type': string;
+  'E-mail 1 - Value': string;
+  'Phone 1 - Type': string;
+  'Phone 1 - Value': string;
+  'Address 1 - Type': string;
+  'Address 1 - Formatted': string;
   'Address 1 - Street': string;
-  'Address 1 - Extended Address': string;
   'Address 1 - City': string;
   'Address 1 - Region': string;
   'Address 1 - Postal Code': string;
-  'Organization Name': string;
-  'Organization Title': string;
+  'Address 1 - Country': string;
+  'Organization 1 - Name': string;
+  'Organization 1 - Title': string;
+  'Website 1 - Type': string;
   'Website 1 - Value': string;
-  'LinkedIn Profile': string;
+  'LinkedIn Profile'?: string; // Only for display, not exported to CSV
 }
 
 export default function BusinessCardExtractor() {
@@ -126,9 +130,9 @@ export default function BusinessCardExtractor() {
       try {
         const contactData = await extractDataFromImage(file);
         
-        // Add LinkedIn Profile field
+        // Add LinkedIn Profile field for display only (not exported)
         contactData['LinkedIn Profile'] = '';
-        
+
         results.push(contactData);
         setProgress(((i + 1) / files.length) * 100);
       } catch (error) {
@@ -137,19 +141,23 @@ export default function BusinessCardExtractor() {
         
         // Add empty contact data for failed extractions
         results.push({
-          'First Name': '',
-          'Last Name': '',
-          'E-mail 1': '',
-          'Phone 1': '',
-          'Address 1': '',
-          'Country': '',
+          'Name': '',
+          'Given Name': '',
+          'Family Name': '',
+          'E-mail 1 - Type': '',
+          'E-mail 1 - Value': '',
+          'Phone 1 - Type': '',
+          'Phone 1 - Value': '',
+          'Address 1 - Type': '',
+          'Address 1 - Formatted': '',
           'Address 1 - Street': '',
-          'Address 1 - Extended Address': '',
           'Address 1 - City': '',
           'Address 1 - Region': '',
           'Address 1 - Postal Code': '',
-          'Organization Name': '',
-          'Organization Title': '',
+          'Address 1 - Country': '',
+          'Organization 1 - Name': '',
+          'Organization 1 - Title': '',
+          'Website 1 - Type': '',
           'Website 1 - Value': '',
           'LinkedIn Profile': ''
         });
@@ -177,16 +185,16 @@ export default function BusinessCardExtractor() {
     
     for (let i = 0; i < updatedContacts.length; i++) {
       const contact = updatedContacts[i];
-      if (contact['First Name'] && contact['Last Name']) {
+      if (contact['Given Name'] && contact['Family Name']) {
         try {
           const linkedinUrl = await searchLinkedInProfile(
-            contact['First Name'],
-            contact['Last Name'],
-            contact['Organization Name']
+            contact['Given Name'],
+            contact['Family Name'],
+            contact['Organization 1 - Name']
           );
           contact['LinkedIn Profile'] = linkedinUrl;
         } catch (error) {
-          console.error(`LinkedIn search failed for ${contact['First Name']} ${contact['Last Name']}:`, error);
+          console.error(`LinkedIn search failed for ${contact['Given Name']} ${contact['Family Name']}:`, error);
         }
       }
       setProgress(((i + 1) / updatedContacts.length) * 100);
@@ -200,7 +208,13 @@ export default function BusinessCardExtractor() {
   const downloadCSV = () => {
     if (extractedData.length === 0) return;
 
-    const csv = Papa.unparse(extractedData);
+    // Remove LinkedIn Profile field from export (it's only for display)
+    const exportData = extractedData.map(contact => {
+      const { 'LinkedIn Profile': _, ...rest } = contact;
+      return rest;
+    });
+
+    const csv = Papa.unparse(exportData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -217,7 +231,7 @@ export default function BusinessCardExtractor() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Business Card Contact Extractor</h1>
         <p className="text-muted-foreground">
-          Upload business card images to automatically extract contact information, find LinkedIn profiles, and export to CSV
+          Upload business card images to automatically extract contact information, find LinkedIn profiles, and export to CSV for import to Google Contacts
         </p>
       </div>
 
@@ -370,8 +384,8 @@ export default function BusinessCardExtractor() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>First Name</TableHead>
-                      <TableHead>Last Name</TableHead>
+                      <TableHead>Given Name</TableHead>
+                      <TableHead>Family Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Organization</TableHead>
@@ -384,19 +398,19 @@ export default function BusinessCardExtractor() {
                   <TableBody>
                     {extractedData.map((contact, index) => (
                       <TableRow key={index}>
-                        <TableCell>{contact['First Name']}</TableCell>
-                        <TableCell>{contact['Last Name']}</TableCell>
-                        <TableCell>{contact['E-mail 1']}</TableCell>
-                        <TableCell>{contact['Phone 1']}</TableCell>
-                        <TableCell>{contact['Organization Name']}</TableCell>
-                        <TableCell>{contact['Organization Title']}</TableCell>
+                        <TableCell>{contact['Given Name']}</TableCell>
+                        <TableCell>{contact['Family Name']}</TableCell>
+                        <TableCell>{contact['E-mail 1 - Value']}</TableCell>
+                        <TableCell>{contact['Phone 1 - Value']}</TableCell>
+                        <TableCell>{contact['Organization 1 - Name']}</TableCell>
+                        <TableCell>{contact['Organization 1 - Title']}</TableCell>
                         <TableCell>{contact['Address 1 - City']}</TableCell>
                         <TableCell className="max-w-32 truncate">{contact['Website 1 - Value']}</TableCell>
                         <TableCell className="max-w-32">
                           {contact['LinkedIn Profile'] && (
-                            <a 
-                              href={contact['LinkedIn Profile']} 
-                              target="_blank" 
+                            <a
+                              href={contact['LinkedIn Profile']}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline flex items-center gap-1"
                             >

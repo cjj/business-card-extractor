@@ -35,21 +35,24 @@ function parseContactInfoAdvanced(text: string) {
     .filter(line => line.length > 0);
 
   const contact = {
-    'First Name': '',
-    'Last Name': '',
-    'E-mail 1': '',
-    'Phone 1': '',
-    'Address 1': '',
-    'Country': '',
+    'Name': '',
+    'Given Name': '',
+    'Family Name': '',
+    'E-mail 1 - Type': '',
+    'E-mail 1 - Value': '',
+    'Phone 1 - Type': '',
+    'Phone 1 - Value': '',
+    'Address 1 - Type': '',
+    'Address 1 - Formatted': '',
     'Address 1 - Street': '',
-    'Address 1 - Extended Address': '',
     'Address 1 - City': '',
     'Address 1 - Region': '',
     'Address 1 - Postal Code': '',
-    'Organization Name': '',
-    'Organization Title': '',
-    'Website 1 - Value': '',
-    'LinkedIn Profile': ''
+    'Address 1 - Country': '',
+    'Organization 1 - Name': '',
+    'Organization 1 - Title': '',
+    'Website 1 - Type': '',
+    'Website 1 - Value': ''
   };
 
   // Enhanced regex patterns
@@ -71,7 +74,8 @@ function parseContactInfoAdvanced(text: string) {
   // Extract email
   const emailMatch = text.match(emailRegex);
   if (emailMatch) {
-    contact['E-mail 1'] = emailMatch[0];
+    contact['E-mail 1 - Type'] = 'Work';
+    contact['E-mail 1 - Value'] = emailMatch[0];
   }
 
   // Extract phone numbers with priority for mobile/cell
@@ -79,18 +83,21 @@ function parseContactInfoAdvanced(text: string) {
   if (phoneMatches.length > 0) {
     // Look for mobile/cell phone first
     let selectedPhone = phoneMatches[0][0]; // Default to first phone
-    
+    let phoneType = 'Work'; // Default type
+
     for (const match of phoneMatches) {
       const phoneContext = text.substring(Math.max(0, match.index! - 20), match.index! + match[0].length + 20).toLowerCase();
-      
+
       // Check if this phone number has mobile/cell indicators
       if (mobileKeywords.some(keyword => phoneContext.includes(keyword))) {
         selectedPhone = match[0];
+        phoneType = 'Mobile';
         break;
       }
     }
-    
-    contact['Phone 1'] = selectedPhone;
+
+    contact['Phone 1 - Type'] = phoneType;
+    contact['Phone 1 - Value'] = selectedPhone;
   }
 
   // Extract website
@@ -100,6 +107,7 @@ function parseContactInfoAdvanced(text: string) {
     if (!website.startsWith('http')) {
       website = 'https://' + website;
     }
+    contact['Website 1 - Type'] = 'Work';
     contact['Website 1 - Value'] = website;
   }
 
@@ -129,10 +137,12 @@ function parseContactInfoAdvanced(text: string) {
   if (nameCandidate) {
     const nameParts = nameCandidate.original.split(/\s+/).filter(part => part.length > 0);
     if (nameParts.length >= 2) {
-      contact['First Name'] = nameParts[0];
-      contact['Last Name'] = nameParts.slice(1).join(' ');
+      contact['Given Name'] = nameParts[0];
+      contact['Family Name'] = nameParts.slice(1).join(' ');
+      contact['Name'] = nameCandidate.original;
     } else if (nameParts.length === 1) {
-      contact['First Name'] = nameParts[0];
+      contact['Given Name'] = nameParts[0];
+      contact['Name'] = nameParts[0];
     }
   }
 
@@ -145,14 +155,14 @@ function parseContactInfoAdvanced(text: string) {
   );
 
   if (titleCandidate) {
-    contact['Organization Title'] = titleCandidate.original;
+    contact['Organization 1 - Title'] = titleCandidate.original;
   }
 
   // Find organization (look for lines that might be company names)
-  const orgCandidate = processedLines.find(line => 
-    !line.hasEmail && 
-    !line.hasPhone && 
-    !line.hasWebsite && 
+  const orgCandidate = processedLines.find(line =>
+    !line.hasEmail &&
+    !line.hasPhone &&
+    !line.hasWebsite &&
     !line.hasTitle &&
     line.original !== (contact['First Name'] + ' ' + contact['Last Name']).trim() &&
     line.wordCount <= 5 &&
@@ -160,22 +170,23 @@ function parseContactInfoAdvanced(text: string) {
   );
 
   if (orgCandidate) {
-    contact['Organization Name'] = orgCandidate.original;
+    contact['Organization 1 - Name'] = orgCandidate.original;
   }
 
   // Extract address information
-  const addressLines = processedLines.filter(line => 
-    !line.hasEmail && 
-    !line.hasPhone && 
+  const addressLines = processedLines.filter(line =>
+    !line.hasEmail &&
+    !line.hasPhone &&
     !line.hasWebsite &&
-    line.original !== contact['First Name'] + ' ' + contact['Last Name'] &&
-    line.original !== contact['Organization Name'] &&
-    line.original !== contact['Organization Title'] &&
+    line.original !== contact['Name'] &&
+    line.original !== contact['Organization 1 - Name'] &&
+    line.original !== contact['Organization 1 - Title'] &&
     (line.hasNumbers || /\b(street|st|avenue|ave|road|rd|drive|dr|lane|ln|boulevard|blvd|suite|ste|apt|apartment)\b/i.test(line.original))
   );
 
   if (addressLines.length > 0) {
-    contact['Address 1'] = addressLines.map(line => line.original).join(', ');
+    contact['Address 1 - Type'] = 'Work';
+    contact['Address 1 - Formatted'] = addressLines.map(line => line.original).join(', ');
     
     // Try to parse city, state, zip from last address line
     const lastAddressLine = addressLines[addressLines.length - 1].original;
@@ -193,7 +204,7 @@ function parseContactInfoAdvanced(text: string) {
     if (cityStateMatch) {
       contact['Address 1 - City'] = cityStateMatch[1].trim();
       contact['Address 1 - Region'] = cityStateMatch[2];
-      contact['Country'] = 'United States';
+      contact['Address 1 - Country'] = 'United States';
     } else {
       // Try alternative patterns
       const parts = lastAddressLine.split(',').map(p => p.trim());
@@ -201,7 +212,7 @@ function parseContactInfoAdvanced(text: string) {
         contact['Address 1 - City'] = parts[parts.length - 2];
         if (parts[parts.length - 1].match(/^[A-Z]{2}/)) {
           contact['Address 1 - Region'] = parts[parts.length - 1].split(/\s+/)[0];
-          contact['Country'] = 'United States';
+          contact['Address 1 - Country'] = 'United States';
         }
       }
     }

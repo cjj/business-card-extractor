@@ -31,38 +31,48 @@ export async function POST(request: NextRequest) {
           content: [
             {
               type: "text",
-              text: `Please extract contact information from this business card image and return it as a JSON object with the following exact field names:
+              text: `Please extract contact information from this business card image and return it as a JSON object with the following exact field names (matching Google Contacts CSV import format):
 
 {
-  "First Name": "",
-  "Last Name": "",
-  "E-mail 1": "",
-  "Phone 1": "",
-  "Address 1": "",
-  "Country": "",
+  "Name": "",
+  "Given Name": "",
+  "Family Name": "",
+  "E-mail 1 - Type": "",
+  "E-mail 1 - Value": "",
+  "Phone 1 - Type": "",
+  "Phone 1 - Value": "",
+  "Address 1 - Type": "",
+  "Address 1 - Formatted": "",
   "Address 1 - Street": "",
-  "Address 1 - Extended Address": "",
   "Address 1 - City": "",
   "Address 1 - Region": "",
   "Address 1 - Postal Code": "",
-  "Organization Name": "",
-  "Organization Title": "",
-  "Website 1 - Value": "",
-  "LinkedIn Profile": ""
+  "Address 1 - Country": "",
+  "Organization 1 - Name": "",
+  "Organization 1 - Title": "",
+  "Website 1 - Type": "",
+  "Website 1 - Value": ""
 }
 
 Instructions:
-- Extract the person's first and last name separately
+- Extract the person's name:
+  * Given Name: First name only
+  * Family Name: Last name only
+  * Name: Full name (Given Name + Family Name)
 - Find email address and phone number
-- For Phone 1: If there are multiple phone numbers, prioritize mobile/cell numbers over office/work numbers. Look for labels like "mobile", "cell", "personal" or numbers that appear to be mobile format
-- For addresses, try to parse street, city, state/region, and postal code separately
+- For E-mail 1 - Type: Use "Work" for business emails, "Home" for personal emails
+- For E-mail 1 - Value: The actual email address
+- For Phone 1 - Type: If there are multiple phone numbers, prioritize mobile/cell numbers and use "Mobile". Otherwise use "Work" for office numbers
+- For Phone 1 - Value: The actual phone number (preferably mobile if available, otherwise work/office number)
+- For Address 1 - Type: Use "Work" for business addresses
+- For Address 1 - Formatted: The complete address as a single string
+- For addresses, try to parse street, city, state/region, postal code, and country separately
 - If you can't find a specific field, leave it as an empty string
-- For websites, include the full URL (add https:// if missing)
-- Organization Name should be the company name
-- Organization Title should be the person's job title/position
-- Address 1 should be the complete address as a single string
-- Country should be inferred from context (default to "United States" if unclear)
-- For LinkedIn Profile: Leave empty for now (will be filled by separate search)
+- For Website 1 - Type: Use "Work"
+- For Website 1 - Value: The full URL (add https:// if missing)
+- Organization 1 - Name should be the company name
+- Organization 1 - Title should be the person's job title/position
+- Address 1 - Country should be the full country name (e.g., "United States", "Canada", etc.)
 - Return ONLY the JSON object, no additional text or formatting`
             },
             {
