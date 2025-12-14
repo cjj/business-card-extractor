@@ -164,7 +164,7 @@ function parseContactInfoAdvanced(text: string) {
     !line.hasPhone &&
     !line.hasWebsite &&
     !line.hasTitle &&
-    line.original !== (contact['First Name'] + ' ' + contact['Last Name']).trim() &&
+    line.original !== (contact['Given Name'] + ' ' + contact['Family Name']).trim() &&
     line.wordCount <= 5 &&
     (line.isAllCaps || line.wordCount <= 3)
   );
