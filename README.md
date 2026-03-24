@@ -135,6 +135,7 @@ The application exports contact data in Google Contacts CSV import format with t
 **Note:** LinkedIn Profile is displayed in the UI but intentionally excluded from CSV export.
 
 ### Recent Changes
+- **2026-03-23:** Security patches: Next.js 15.5.9 → 15.5.14 (HTTP smuggling, DoS fixes), plus transitive dependency updates for `tar`, `flatted`, `minimatch`, `ajv`, `lodash`, and `qs`
 - **2025-12-13:** Updated to Google Contacts official CSV format (changed from `First Name`/`Last Name` to `Given Name`/`Family Name`)
 - **2025-12-13:** Security patches: Next.js 15.5.3 → 15.5.9, Node.js 20 → 22 (Dockerfile)
 - **2025-12-13:** Added placeholder test script to satisfy CI requirements
@@ -145,4 +146,4 @@ This project is open‑source and available under the MIT License.
 
 ---
 
-*Built with Next.js 15, Tailwind CSS, Radix UI, OpenAI, and Tesseract.js.*
+*Built with Next.js 15.5.14, Tailwind CSS, Radix UI, OpenAI, and Tesseract.js.*
